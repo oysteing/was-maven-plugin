@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.gisnas.oystein.ibm</groupId>
+	<artifactId>wsdeploy</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.ibm.ws</groupId>
+			<artifactId>admin-client</artifactId>
+			<version>8.5.0</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>net.gisnas.oystein</id>
+			<name>Øysteins Maven repo</name>
+			<url>http://gobo.mycloudnas.com/maven-repo</url>
+		</repository>
+	</repositories>
+</project>
