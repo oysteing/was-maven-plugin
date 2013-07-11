@@ -1,6 +1,7 @@
 package net.gisnas.oystein.ibm;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ibm.websphere.management.AdminClient;
 import com.ibm.websphere.management.application.AppManagement;
@@ -16,7 +17,8 @@ import com.ibm.websphere.management.exception.AdminException;
  */
 public class AppManagementClient {
 
-	private static Logger LOGGER = Logger.getLogger(AppManagementClient.class.getName());
+	private static final Logger logger = LoggerFactory
+			.getLogger(AdminClientConnectorProperties.class);
 	
 	private AppManagement proxy;
 
@@ -44,7 +46,7 @@ public class AppManagementClient {
 			if (result == null) {
 				throw new RuntimeException("Could not start application '" + appName + "'. Please consult server logs");
 			}
-			LOGGER.info("startApplication result: "+ result);
+			logger.debug("startApplication result: "+ result);
 		} catch (AdminException e) {
 			throw new RuntimeException("Could not start application", e);
 		}
