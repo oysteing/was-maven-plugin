@@ -10,7 +10,7 @@
 	<logger name="com.ibm.ws.ssl.config.SSLConfigManager" level="warn"/>
 	<logger name="com.ibm.ws.security.config.SecurityObjectLocator" level="warn"/>
 
-	<root level="info">
+	<root level="debug">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

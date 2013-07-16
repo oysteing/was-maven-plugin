@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.ibm.ejs.ras.ManagerAdmin;
 import com.ibm.websphere.management.AdminClient;
 import com.ibm.websphere.management.AdminClientFactory;
 import com.ibm.websphere.management.exception.ConnectorException;
@@ -112,9 +113,13 @@ public class AdminClientConnectorProperties extends Properties {
 			AdminClientConnectorProperties properties) {
 		logger.debug("Creating AdminClient with {}", properties);
 
-		// Redirect java.util.logging to SLF4j
+		// Remove IBM logging from stdout
 		SLF4JBridgeHandler.removeHandlersForRootLogger();
-		SLF4JBridgeHandler.install();
+		// Uncomment to redirect logs to SLF4j
+//		SLF4JBridgeHandler.install();
+		
+		// Enable IBM trace logger
+		ManagerAdmin.configureClientTrace("*=info", "stdout", null, false, null, false, false);
 
 		// Add system property to avoid missing CORBA classes when using Sun JRE
 		// See http://www-01.ibm.com/support/docview.wss?uid=swg1PM39777
