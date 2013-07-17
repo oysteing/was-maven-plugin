@@ -216,7 +216,18 @@ public class AppManagementClient implements NotificationListener {
 	public void uninstallApplication(String appName) {
 		try {
 			adminClient.addNotificationListener(getMBean(), this, null, null);
-			proxy.uninstallApplication(appName, new Hashtable<String, Object>(), null);
+			synchronized (this) {
+				proxy.uninstallApplication(appName, new Hashtable<String, Object>(), null);
+				switch (getAppNotificationStatus(AppNotification.UNINSTALL)) {
+				case AppNotification.STATUS_COMPLETED:
+					logger.debug("Uninstallation of {} completed successfully", appName);
+					break;
+				case AppNotification.STATUS_FAILED:
+					throw new RuntimeException("Uninstallation of " + appName + " failed, see log messages for details");
+				default:
+					throw new RuntimeException("Received no conclusive status from application uninstallation");
+				}
+			}
 		} catch (AdminException e) {
 			throw new RuntimeException("Uninstallation of application " + appName + " failed", e);
 		} catch (InstanceNotFoundException e) {
