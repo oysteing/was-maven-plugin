@@ -29,6 +29,7 @@ public class AppManager {
 	}
 
 	public boolean isStarted(String appName) {
+		logger.debug("Checking if application {} is started", appName);
 		ObjectName query;
 		try {
 			query = new ObjectName("WebSphere:type=Application,name=" + appName + ",*");
@@ -38,8 +39,10 @@ public class AppManager {
 		try {
 			Set<?> result = adminClient.queryNames(query, null);
 			if (result.size() == 1) {
+				logger.debug("Application {} is started", appName);
 				return true;
 			} else if (result.size() == 0) {
+				logger.debug("Application {} is not started", appName);
 				return false;
 			} else {
 				throw new RuntimeException("JMX query '" + query + "' returned " + result.size() + " results");
@@ -55,13 +58,14 @@ public class AppManager {
 	 * @param appName
 	 */
 	public void startApplication(String appName) {
+		logger.debug("Attempting to start application {}", appName);
 		if (isStarted(appName)) {
 			logger.debug("Application {} is already started. Doing nothing.", appName);
 			return;
 		}
 		logger.debug("Starting application {}", appName);
 		am.startApplication(appName);
-		logger.debug("Application {} started", appName);
+		logger.info("Application {} started", appName);
 	}
 
 	/**
@@ -70,13 +74,14 @@ public class AppManager {
 	 * @param appName
 	 */
 	public void stopApplication(String appName) {
+		logger.debug("Attempting to stop application {}", appName);
 		if (!isStarted(appName)) {
 			logger.debug("Application {} is not running. Doing nothing.", appName);
 			return;
 		}
 		logger.debug("Stopping application {}", appName);
 		am.stopApplication(appName);
-		logger.debug("Application {} started", appName);
+		logger.info("Application {} stopped", appName);
 	}
 
 	/**
@@ -87,6 +92,7 @@ public class AppManager {
 	 * @param earPath
 	 */
 	public void installApplication(String earPath) {
+		logger.debug("Installation of {} started", earPath);
 		try {
 			String appName = AppInstallHelper.getAppDisplayName(AppInstallHelper.getEarFile(earPath, false, false, null), null);
 			boolean appExists = am.checkIfAppExists(appName);
@@ -94,10 +100,10 @@ public class AppManager {
 			if (!isStarted(appName)) {
 				am.startApplication(appName);
 			}
+			logger.info("Application {} installed successfully", appName);
 		} catch (AppDeploymentException e) {
 			throw new RuntimeException("An error occured while reading EAR file " + earPath, e);
 		}
-
 	}
 
 	/**
@@ -106,9 +112,11 @@ public class AppManager {
 	 * @param appName
 	 */
 	public void uninstallApplication(String appName) {
+		logger.debug("Uninstallation of {} started", appName);
 		boolean appExists = am.checkIfAppExists(appName);
 		if (appExists) {
 			am.uninstallApplication(appName);
 		}
+		logger.info("Application {} uninstalled successfully", appName);
 	}
 }

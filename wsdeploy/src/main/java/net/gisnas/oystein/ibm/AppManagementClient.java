@@ -244,15 +244,14 @@ public class AppManagementClient implements NotificationListener {
 	}
 
 	public void handleNotification(Notification notification, Object handback) {
-		logger.trace("Notification received: {}", notification);
 		AppNotification appNotification = (AppNotification) notification.getUserData();
-		logger.debug("AppNotification: {}", appNotification);
+		logger.trace("AppNotification received: {}", appNotification);
 		switch (appNotification.taskStatus) {
 		case AppNotification.STATUS_INPROGRESS:
-			logger.info("{}", appNotification.message);
+			logger.debug("{}", appNotification.message);
 			break;
 		case AppNotification.STATUS_COMPLETED:
-			logger.info("{}", appNotification.message);
+			logger.debug("{}", appNotification.message);
 			setAppNotificationStatus(appNotification.taskStatus, appNotification.taskName);
 			break;
 		case AppNotification.STATUS_WARNING:

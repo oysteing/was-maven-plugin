@@ -119,7 +119,7 @@ public class AdminClientConnectorProperties extends Properties {
 //		SLF4JBridgeHandler.install();
 		
 		// Enable IBM trace logger
-		ManagerAdmin.configureClientTrace("*=info", "stdout", null, false, null, false, false);
+		ManagerAdmin.configureClientTrace("*=info", "named file", "/dev/null", false, null, false, false);
 
 		// Add system property to avoid missing CORBA classes when using Sun JRE
 		// See http://www-01.ibm.com/support/docview.wss?uid=swg1PM39777
