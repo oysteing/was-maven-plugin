@@ -13,7 +13,15 @@
 					<artifactId>was6-maven-plugin</artifactId>
 					<version>1.2</version>
 					<configuration>
-						<wasHome></wasHome>
+						<wasHome>/home/oysteigi/ibm/was</wasHome>
+						<earFile>${project.build.directory}/${project.build.finalName}.ear</earFile>
+						<!--applicationName>echoear</applicationName-->
+						<conntype>SOAP</conntype>
+						<host>10.0.0.6</host>
+						<port>8880</port>
+						<user>igor</user>
+						<password>Test1234</password>
+						<updateExisting>false</updateExisting>
 					</configuration>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
