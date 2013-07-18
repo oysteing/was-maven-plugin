@@ -29,7 +29,7 @@ import com.ibm.websphere.management.exception.ConnectorException;
  */
 public class AppManagementClient implements NotificationListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(AdminClientConnectorProperties.class);
+	private static final Logger logger = LoggerFactory.getLogger(AppManagementClient.class);
 	private static final long MAX_WAIT_TIME = 86400000L;
 
 	private AppManagement proxy;
@@ -152,11 +152,11 @@ public class AppManagementClient implements NotificationListener {
 	 * If there are multiple servers and one clusters, the cluster will be
 	 * chosen as the deployment target.
 	 * 
-	 * @param earFile
+	 * @param earPath
 	 * @param redeploy
 	 * @param appName
 	 */
-	public void installApplication(String earFile, boolean redeploy, String appName) {
+	public void installApplication(String earPath, boolean redeploy, String appName) {
 		Set<?> servers = getServers();
 		Set<?> clusters = getClusters();
 		ObjectName deploymentTarget;
@@ -170,7 +170,7 @@ public class AppManagementClient implements NotificationListener {
 						+ " clusters. Please specifiy target");
 			}
 		}
-		installApplication(earFile, redeploy, appName, deploymentTarget.toString());
+		installApplication(earPath, redeploy, appName, deploymentTarget.toString());
 	}
 
 	public void installApplication(String earFile, boolean redeploy, String appName, String target) {
@@ -186,7 +186,7 @@ public class AppManagementClient implements NotificationListener {
 				if (redeploy) {
 					proxy.redeployApplication(earFile, appName, props, null);
 				} else {
-					proxy.installApplication(earFile, props, null);
+					proxy.installApplication(earFile, appName, props, null);
 				}
 				switch (getAppNotificationStatus(AppNotification.INSTALL)) {
 				case AppNotification.STATUS_COMPLETED:

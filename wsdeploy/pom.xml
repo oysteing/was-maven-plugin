@@ -5,6 +5,10 @@
 	<artifactId>wsdeploy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.ibm.ws</groupId>
@@ -70,10 +74,12 @@
 						<target>1.7</target>
 					</configuration>
 				</plugin>
+				
 			</plugins>
 		</pluginManagement>
 	</build>
 
+	<!-- IBM admin client runtime -->
 	<repositories>
 		<repository>
 			<id>net.gisnas.oystein</id>

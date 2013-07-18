@@ -1,5 +1,6 @@
 package net.gisnas.oystein.ibm;
 
+import java.io.File;
 import java.util.Set;
 
 import javax.management.MalformedObjectNameException;
@@ -18,7 +19,7 @@ import com.ibm.ws.management.application.client.AppInstallHelper;
  */
 public class AppManager {
 
-	private static final Logger logger = LoggerFactory.getLogger(AdminClientConnectorProperties.class);
+	private static final Logger logger = LoggerFactory.getLogger(AppManager.class);
 
 	private AppManagementClient am;
 	private AdminClient adminClient;
@@ -55,6 +56,18 @@ public class AppManager {
 	/**
 	 * Start application on all deployment targets, if not already running
 	 * 
+	 * Application name is extracted from display-name in earFile's application.xml
+	 * 
+	 * @param earFile
+	 */
+	public void startApplication(File earFile) {
+		String appName = extractAppName(earFile);
+		startApplication(appName);
+	}
+
+	/**
+	 * Start application on all deployment targets, if not already running
+	 * 
 	 * @param appName
 	 */
 	public void startApplication(String appName) {
@@ -66,6 +79,17 @@ public class AppManager {
 		logger.debug("Starting application {}", appName);
 		am.startApplication(appName);
 		logger.info("Application {} started", appName);
+	}
+
+	/**
+	 * Stop application on all deployment targets, if not already stopped
+	 *
+	 * Application name is extracted from display-name in earFile's application.xml
+	 * 
+	 * @param earFile
+	 */
+	public void stopApplication(File earFile) {
+		stopApplication(extractAppName(earFile));
 	}
 
 	/**
@@ -89,21 +113,40 @@ public class AppManager {
 	 * 
 	 * Will update if the application is already installed
 	 * 
-	 * @param earPath
+	 * @param earFile
 	 */
-	public void installApplication(String earPath) {
-		logger.debug("Installation of {} started", earPath);
-		try {
-			String appName = AppInstallHelper.getAppDisplayName(AppInstallHelper.getEarFile(earPath, false, false, null), null);
-			boolean appExists = am.checkIfAppExists(appName);
-			am.installApplication(earPath, appExists, appName);
-			if (!isStarted(appName)) {
-				am.startApplication(appName);
-			}
-			logger.info("Application {} installed successfully", appName);
-		} catch (AppDeploymentException e) {
-			throw new RuntimeException("An error occured while reading EAR file " + earPath, e);
+	public void installApplication(File earFile) {
+		String appName = extractAppName(earFile);
+		installApplication(earFile, appName);
+	}
+
+	/**
+	 * Install application
+	 * 
+	 * Will update if the application is already installed
+	 * 
+	 * @param earFile
+	 * @param appName
+	 */
+	public void installApplication(File earFile, String appName) {
+		logger.debug("Installation of {} started", appName);
+		boolean appExists = am.checkIfAppExists(appName);
+		am.installApplication(earFile.getPath(), appExists, appName);
+		if (!isStarted(appName)) {
+			am.startApplication(appName);
 		}
+		logger.info("Application {} installed successfully", appName);
+	}
+
+	/**
+	 * Uninstall application
+	 * 
+	 * Application name is extracted from display-name in earFile's application.xml
+	 * 
+	 * @param earFile
+	 */
+	public void uninstallApplication(File earFile) {
+		uninstallApplication(extractAppName(earFile));
 	}
 
 	/**
@@ -119,4 +162,20 @@ public class AppManager {
 		}
 		logger.info("Application {} uninstalled successfully", appName);
 	}
+
+	/**
+	 * Extract application name from display-name in EAR file's application.xml
+	 * 
+	 * @param earFile
+	 * @return application name
+	 */
+	private static String extractAppName(File earFile) {
+		try {
+			String appName = AppInstallHelper.getAppDisplayName(AppInstallHelper.getEarFile(earFile.getPath(), false, false, null), null);
+			return appName;
+		} catch (AppDeploymentException e) {
+			throw new RuntimeException("An error occured while reading EAR file " + earFile, e);
+		}
+	}
+
 }

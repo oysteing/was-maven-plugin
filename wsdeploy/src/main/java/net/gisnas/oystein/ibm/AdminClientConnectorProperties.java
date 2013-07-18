@@ -1,6 +1,8 @@
 package net.gisnas.oystein.ibm;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.soap.SOAPException;
@@ -26,16 +28,15 @@ import com.ibm.websphere.management.exception.ConnectorException;
 public class AdminClientConnectorProperties extends Properties {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LoggerFactory
-			.getLogger(AdminClientConnectorProperties.class);
+	private static final Logger logger = LoggerFactory.getLogger(AdminClientConnectorProperties.class);
 
 	/**
-	 * Connection to local deployment manager on default port (8880)
+	 * Connection to local deployment manager on default port (8879)
 	 */
 	public AdminClientConnectorProperties() {
 		// Supports only SOAP - no RMI
 		setProperty(AdminClient.CONNECTOR_TYPE, AdminClient.CONNECTOR_TYPE_SOAP);
-		setAddress("localhost", 8880);
+		setAddress("localhost", 8879);
 	}
 
 	/**
@@ -43,9 +44,9 @@ public class AdminClientConnectorProperties extends Properties {
 	 * 
 	 * @param username
 	 * @param password
+	 * @param trustStore
 	 */
-	public AdminClientConnectorProperties(String username, String password,
-			String trustStore) {
+	public AdminClientConnectorProperties(String username, String password, File trustStore) {
 		this();
 		setSecurity(username, password, trustStore);
 	}
@@ -73,10 +74,9 @@ public class AdminClientConnectorProperties extends Properties {
 	 * @param password
 	 *            Password for deployment manager administrative user
 	 * @param trustStore
-	 *            File path to JKS keystore with trusted CAs
+	 *            JKS keystore with trusted CAs
 	 */
-	public AdminClientConnectorProperties(String host, int port,
-			String username, String password, String trustStore) {
+	public AdminClientConnectorProperties(String host, int port, String username, String password, File trustStore) {
 		this();
 		setAddress(host, port);
 		setSecurity(username, password, trustStore);
@@ -87,16 +87,45 @@ public class AdminClientConnectorProperties extends Properties {
 		setProperty(AdminClient.CONNECTOR_PORT, String.valueOf(port));
 	}
 
-	private void setSecurity(String username, String password, String trustStore) {
+	private void setSecurity(String username, String password, File trustStore) {
 		setProperty(AdminClient.CONNECTOR_SECURITY_ENABLED, "true");
 		setProperty(AdminClient.USERNAME, username);
 		setProperty(AdminClient.PASSWORD, password);
 		if (trustStore != null) {
-			setProperty("javax.net.ssl.trustStore", trustStore);
-			if (!new File(trustStore).exists()) {
-				throw new RuntimeException("Trust store " + trustStore
-						+ " doesn't exist");
+			if (!trustStore.exists()) {
+				throw new RuntimeException("Trust store " + trustStore + " doesn't exist");
 			}
+			setProperty("javax.net.ssl.trustStore", trustStore.getPath());
+		}
+	}
+
+	/**
+	 * Mask out passwords
+	 */
+	@Override
+	public synchronized String toString() {
+		int max = size() - 1;
+		if (max == -1)
+			return "{}";
+
+		StringBuilder sb = new StringBuilder();
+		Iterator<Map.Entry<Object, Object>> it = entrySet().iterator();
+
+		sb.append('{');
+		for (int i = 0;; i++) {
+			Map.Entry<Object, Object> e = it.next();
+			Object key = e.getKey();
+			Object value = e.getValue();
+			sb.append(key == this ? "(this Map)" : key.toString());
+			sb.append('=');
+			if (key.equals(AdminClient.PASSWORD)) {
+				value = "*******";
+			}
+			sb.append(value == this ? "(this Map)" : value.toString());
+
+			if (i == max)
+				return sb.append('}').toString();
+			sb.append(", ");
 		}
 	}
 
@@ -109,15 +138,16 @@ public class AdminClientConnectorProperties extends Properties {
 	 * @param properties
 	 * @return
 	 */
-	public static AdminClient createAdminClient(
-			AdminClientConnectorProperties properties) {
+	public static AdminClient createAdminClient(AdminClientConnectorProperties properties) {
+		// It's a security risk to log all properties, which may include a
+		// password
 		logger.debug("Creating AdminClient with {}", properties);
 
 		// Remove IBM logging from stdout
 		SLF4JBridgeHandler.removeHandlersForRootLogger();
 		// Uncomment to redirect logs to SLF4j
-//		SLF4JBridgeHandler.install();
-		
+		// SLF4JBridgeHandler.install();
+
 		// Enable IBM trace logger
 		ManagerAdmin.configureClientTrace("*=info", "named file", "/dev/null", false, null, false, false);
 
@@ -131,12 +161,9 @@ public class AdminClientConnectorProperties extends Properties {
 			Throwable rootCause = Throwables.getRootCause(e);
 			// SOAPException from server
 			if (rootCause instanceof SOAPException) {
-				throw new RuntimeException(
-						"Connection to deployment manager failed with remote exception",
-						rootCause);
+				throw new RuntimeException("Connection to deployment manager failed with remote exception", rootCause);
 			}
-			throw new RuntimeException(
-					"Failed connecting to the deployment manager", e);
+			throw new RuntimeException("Failed connecting to the deployment manager", e);
 		}
 	}
 

@@ -3,6 +3,8 @@ package net.gisnas.oystein.ibm;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +13,8 @@ import com.ibm.websphere.management.AdminClient;
 
 public class AppManagerTest {
 
-	private static final String TRUST_STORE = "src/test/resources/trustStore.jks";
-	private static final String EAR_FILE = "src/test/resources/echoear-0.0.1-SNAPSHOT.ear";
+	private static final File TRUST_STORE = new File("src/test/resources/trustStore.jks");
+	private static final File EAR_FILE = new File("src/test/resources/echoear-0.0.1-SNAPSHOT.ear");
 	private static final String APP_NAME = "echoear";
 
 	AppManager am;
