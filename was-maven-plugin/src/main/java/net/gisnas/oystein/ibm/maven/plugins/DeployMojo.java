@@ -14,16 +14,17 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class DeployMojo extends AbstractAppMojo {
 
-	protected String deploymentTarget;
-
+	/**
+	 * Name of target cluster to deploy to
+	 * 
+	 * @parameter expression="${was.cluster}"
+	 */
+	private String cluster;
+	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		initConnection();
 		getLog().info("Deploying application " + earFile);
-		if (applicationName == null) {
-			appManager.installApplication(earFile);
-		} else {
-			appManager.installApplication(earFile, applicationName);
-		}
+		appManager.installApplication(earFile, applicationName, cluster);
 	}
 	
 }

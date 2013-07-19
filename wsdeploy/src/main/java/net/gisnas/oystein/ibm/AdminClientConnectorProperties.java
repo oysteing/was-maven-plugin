@@ -139,6 +139,21 @@ public class AdminClientConnectorProperties extends Properties {
 	 * @return
 	 */
 	public static AdminClient createAdminClient(AdminClientConnectorProperties properties) {
+		return createAdminClient(properties, null, null);
+	}
+
+		/**
+	 * Helper method to create AdminClient
+	 * 
+	 * Does some basic exception detection and logging in addition to what
+	 * AdminClientFactory does
+	 * 
+	 * @param properties
+	 * @param traceFile If set, trace logging is enabled and output to this file
+	 * @param traceString {@link http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.base.doc/ae/utrb_loglevel.html}
+	 * @return
+	 */
+	public static AdminClient createAdminClient(AdminClientConnectorProperties properties, File traceFile, String traceString) {
 		// It's a security risk to log all properties, which may include a
 		// password
 		logger.debug("Creating AdminClient with {}", properties);
@@ -149,7 +164,9 @@ public class AdminClientConnectorProperties extends Properties {
 		// SLF4JBridgeHandler.install();
 
 		// Enable IBM trace logger
-		ManagerAdmin.configureClientTrace("*=info", "named file", "/dev/null", false, null, false, false);
+		if (traceFile != null) {
+			ManagerAdmin.configureClientTrace(traceString, "named file", traceFile.getPath(), false, null, false, false);
+		}
 
 		// Add system property to avoid missing CORBA classes when using Sun JRE
 		// See http://www-01.ibm.com/support/docview.wss?uid=swg1PM39777

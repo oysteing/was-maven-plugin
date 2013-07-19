@@ -116,8 +116,7 @@ public class AppManager {
 	 * @param earFile
 	 */
 	public void installApplication(File earFile) {
-		String appName = extractAppName(earFile);
-		installApplication(earFile, appName);
+		installApplication(earFile, null, null);
 	}
 
 	/**
@@ -126,12 +125,21 @@ public class AppManager {
 	 * Will update if the application is already installed
 	 * 
 	 * @param earFile
-	 * @param appName
+	 * @param appName Application name. If not set, uses display-name in application.xml.
+	 * @param cluster Deploy to this cluster. Must be set if more than one clusters/servers.
 	 */
-	public void installApplication(File earFile, String appName) {
+	public void installApplication(File earFile, String appName, String cluster) {
+		if (appName == null) {
+			appName = extractAppName(earFile);
+		}
 		logger.debug("Installation of {} started", appName);
 		boolean appExists = am.checkIfAppExists(appName);
-		am.installApplication(earFile.getPath(), appExists, appName);
+		if (cluster == null) {
+			am.installApplication(earFile.getPath(), appExists, appName);
+		} else {
+			ObjectName clusterON = am.lookupCluster(cluster);
+			am.installApplication(earFile.getPath(), appExists, appName, clusterON.toString());
+		}
 		if (!isStarted(appName)) {
 			am.startApplication(appName);
 		}

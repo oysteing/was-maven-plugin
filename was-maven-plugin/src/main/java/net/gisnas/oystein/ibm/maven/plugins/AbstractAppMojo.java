@@ -15,7 +15,7 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 	 * EAR file to deploy
 	 * 
 	 * @parameter expression="${was.earFile}" default-value=
-	 *            "${project.build.directory}/${project.build.finalName}.${project.packaging}"
+	 *            "${project.build.directory}/${project.build.finalName}.ear"
 	 */
 	protected File earFile;
 
@@ -73,6 +73,24 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 	protected File trustStore;
 
 	/**
+	 * Output file for trace logging. Trace logging is enabled when set.
+	 * 
+	 * @parameter expression="${was.traceFile}"
+	 */
+	protected File traceFile;
+
+	/**
+	 * Trace specification according to {@link http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.base.doc/ae/utrb_loglevel.html}
+	 * 
+	 * For example "*=finest" for the most verbose output. This setting only
+	 * takes effect if {@link AbstractAppMojo#traceFile} is set. When not
+	 * specified, trace level "*=info" is used.
+	 * 
+	 * @parameter expression="${was.traceString}"
+	 */
+	protected String traceString;
+
+	/**
 	 * @parameter expression="${settings}"
 	 * @required
 	 * @readonly
@@ -96,7 +114,7 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 		} else {
 			properties = new AdminClientConnectorProperties(host, port);
 		}
-		appManager = new AppManager(AdminClientConnectorProperties.createAdminClient(properties));
+		appManager = new AppManager(AdminClientConnectorProperties.createAdminClient(properties, traceFile, traceString));
 	}
 
 }

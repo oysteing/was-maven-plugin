@@ -110,6 +110,21 @@ public class AppManagementClient implements NotificationListener {
 		}
 	}
 
+	public ObjectName lookupCluster(String cluster) {
+		try {
+			ObjectName query = new ObjectName("WebSphere:type=Cluster,name=" + cluster + ",*");
+			Iterator<?> iter = adminClient.queryNames(query, null).iterator();
+			if (iter.hasNext()) {
+				throw new RuntimeException("Cluster " + cluster + " not found");
+			}
+			return (ObjectName) iter.next();
+		} catch (MalformedObjectNameException e) {
+			throw new RuntimeException("An error occured while querying cluster", e);
+		} catch (ConnectorException e) {
+			throw new RuntimeException("An error occured in the communication with the deployment manager", e);
+		}
+	}
+
 	/**
 	 * Start application on all deployment targets
 	 * 

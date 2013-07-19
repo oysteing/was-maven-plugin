@@ -30,6 +30,11 @@
 					<version>0.0.1-SNAPSHOT</version>
 					<configuration>
 						<trustStore>/home/oysteigi/src/ibmdeploy/wsdeploy/src/test/resources/trustStore.jks</trustStore>
+						<host>10.0.0.6</host>
+						<port>8880</port>
+						<serverId>10.0.0.6</serverId>
+						<traceFile>/tmp/trace</traceFile>
+						<traceString>*=finer</traceString>
 					</configuration>
 				</plugin>
 			</plugins>
