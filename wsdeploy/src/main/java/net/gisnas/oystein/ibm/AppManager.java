@@ -138,7 +138,9 @@ public class AppManager {
 			am.installApplication(earFile.getPath(), appExists, appName);
 		} else {
 			ObjectName clusterON = am.lookupCluster(cluster);
-			am.installApplication(earFile.getPath(), appExists, appName, clusterON.toString());
+			String cell = clusterON.getKeyProperty("cell");
+			String clusterId = "WebSphere:cell=" + cell + ",cluster=" + cluster;
+			am.installApplication(earFile.getPath(), appExists, appName, clusterId);
 		}
 		if (!isStarted(appName)) {
 			am.startApplication(appName);

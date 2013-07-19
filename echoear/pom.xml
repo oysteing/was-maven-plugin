@@ -35,6 +35,7 @@
 						<serverId>10.0.0.6</serverId>
 						<traceFile>/tmp/trace</traceFile>
 						<traceString>*=finer</traceString>
+						<cluster>server1</cluster>
 					</configuration>
 				</plugin>
 			</plugins>

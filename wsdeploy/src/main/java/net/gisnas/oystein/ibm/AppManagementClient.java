@@ -114,7 +114,7 @@ public class AppManagementClient implements NotificationListener {
 		try {
 			ObjectName query = new ObjectName("WebSphere:type=Cluster,name=" + cluster + ",*");
 			Iterator<?> iter = adminClient.queryNames(query, null).iterator();
-			if (iter.hasNext()) {
+			if (!iter.hasNext()) {
 				throw new RuntimeException("Cluster " + cluster + " not found");
 			}
 			return (ObjectName) iter.next();
