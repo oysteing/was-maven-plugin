@@ -18,9 +18,9 @@ public class StartAppMojo extends AbstractAppMojo {
 		initConnection();
 		getLog().info("Starting application " + earFile);
 		if (applicationName == null) {
-			appManager.startApplication(earFile);
+			appManager.startApp(earFile);
 		} else {
-			appManager.startApplication(applicationName);
+			appManager.startApp(applicationName);
 		}
 	}
 	

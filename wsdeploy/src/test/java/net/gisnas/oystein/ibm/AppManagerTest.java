@@ -33,57 +33,57 @@ public class AppManagerTest {
 
 	@Test
 	public void isStarted() {
-		am.installApplication(EAR_FILE);
+		am.deploy(EAR_FILE);
 		assertTrue(am.isStarted(APP_NAME));
 	}
 
 	@Test(expected=RuntimeException.class)
 	public void startNonExistent() {
-		am.startApplication("non_existent_app");
+		am.startApp("non_existent_app");
 	}
 
 	@Test
 	public void startAlreadyRunning() {
-		am.installApplication(EAR_FILE);
-		am.startApplication(APP_NAME);
+		am.deploy(EAR_FILE);
+		am.startApp(APP_NAME);
 		assertTrue(am.isStarted(APP_NAME));
 	}
 
 	@Test
-	public void startApplication() {
-		am.installApplication(EAR_FILE);
-		am.stopApplication(APP_NAME);
-		am.startApplication(APP_NAME);
+	public void startApp() {
+		am.deploy(EAR_FILE);
+		am.stopApp(APP_NAME);
+		am.startApp(APP_NAME);
 		assertTrue(am.isStarted(APP_NAME));
 	}
 
 	@Test
 	public void stopNonExistent() {
-		am.stopApplication("non_existent_app");
+		am.stopApp("non_existent_app");
 		Assert.assertFalse(am.isStarted("non_existent_app"));
 	}
 
 	@Test
-	public void stopApplication() {
-		am.installApplication(EAR_FILE);
-		am.stopApplication(APP_NAME);
+	public void stopApp() {
+		am.deploy(EAR_FILE);
+		am.stopApp(APP_NAME);
 		assertFalse(am.isStarted(APP_NAME));
 	}
 
 	@Test
-	public void installApplication() {
-		am.uninstallApplication(APP_NAME);
-		am.installApplication(EAR_FILE);
+	public void deploy() {
+		am.undeploy(APP_NAME);
+		am.deploy(EAR_FILE);
 	}
 
 	@Test
-	public void uninstallNonExistent() {
-		am.uninstallApplication("non_existent_app");
+	public void undeployNonExistent() {
+		am.undeploy("non_existent_app");
 	}
 	
 	@Test
-	public void uninstallApplication() {
-		am.installApplication(EAR_FILE);
-		am.uninstallApplication(APP_NAME);
+	public void undeploy() {
+		am.deploy(EAR_FILE);
+		am.undeploy(APP_NAME);
 	}
 }

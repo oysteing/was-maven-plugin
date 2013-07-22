@@ -1,5 +1,7 @@
 package net.gisnas.oystein.ibm;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.junit.Before;
@@ -58,6 +60,12 @@ public class AppManagementClientTest {
 	public void uninstallNonExistentApplication() {
 		String appName = "non_existent_app";
 		amClient.uninstallApplication(appName);
+	}
+	
+	@Test
+	public void isAppReady() {
+		boolean isReady = amClient.isAppReady(APP_NAME);
+		assertTrue(isReady);
 	}
 
 }

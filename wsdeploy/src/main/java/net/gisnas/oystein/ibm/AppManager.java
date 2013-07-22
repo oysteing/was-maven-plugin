@@ -39,14 +39,21 @@ public class AppManager {
 		}
 		try {
 			Set<?> result = adminClient.queryNames(query, null);
-			if (result.size() == 1) {
-				logger.debug("Application {} is started", appName);
-				return true;
-			} else if (result.size() == 0) {
+			if (result.size() == 0) {
 				logger.debug("Application {} is not started", appName);
 				return false;
+			}
+			Set<String> targets = am.getAppAssociation(appName);
+			logger.debug("Found deployment targets for application {}: {}", appName, targets);
+			if (result.size() == targets.size()) {
+				logger.debug("Application {} is started", appName);
+				return true;
+			} else if (result.size() < targets.size()) {
+				logger.debug("Application {} is started on {} og {} deployment targets", appName, result.size(), targets.size());
+				return false;
 			} else {
-				throw new RuntimeException("JMX query '" + query + "' returned " + result.size() + " results");
+				logger.warn("Got unexpected result when querying application {} to see if it's started (started on {} targets out of {}", appName, result.size(), targets.size());
+				throw new RuntimeException("Got unexpected result when querying application to see if it's started");
 			}
 		} catch (ConnectorException e) {
 			throw new RuntimeException("An error occured in the communication with the deployment manager", e);
@@ -60,9 +67,9 @@ public class AppManager {
 	 * 
 	 * @param earFile
 	 */
-	public void startApplication(File earFile) {
+	public void startApp(File earFile) {
 		String appName = extractAppName(earFile);
-		startApplication(appName);
+		startApp(appName);
 	}
 
 	/**
@@ -70,7 +77,7 @@ public class AppManager {
 	 * 
 	 * @param appName
 	 */
-	public void startApplication(String appName) {
+	public void startApp(String appName) {
 		logger.debug("Attempting to start application {}", appName);
 		if (isStarted(appName)) {
 			logger.debug("Application {} is already started. Doing nothing.", appName);
@@ -88,8 +95,8 @@ public class AppManager {
 	 * 
 	 * @param earFile
 	 */
-	public void stopApplication(File earFile) {
-		stopApplication(extractAppName(earFile));
+	public void stopApp(File earFile) {
+		stopApp(extractAppName(earFile));
 	}
 
 	/**
@@ -97,7 +104,7 @@ public class AppManager {
 	 * 
 	 * @param appName
 	 */
-	public void stopApplication(String appName) {
+	public void stopApp(String appName) {
 		logger.debug("Attempting to stop application {}", appName);
 		if (!isStarted(appName)) {
 			logger.debug("Application {} is not running. Doing nothing.", appName);
@@ -109,18 +116,24 @@ public class AppManager {
 	}
 
 	/**
-	 * Install application
-	 * 
+	 * Deploy application
+	 * -Install application
+	 * -Wait for distribution
+	 * -Start application
+	 *  
 	 * Will update if the application is already installed
 	 * 
 	 * @param earFile
 	 */
-	public void installApplication(File earFile) {
-		installApplication(earFile, null, null);
+	public void deploy(File earFile) {
+		deploy(earFile, null, null);
 	}
 
 	/**
-	 * Install application
+	 * Deploy application
+	 * -Install application
+	 * -Wait for distribution
+	 * -Start application
 	 * 
 	 * Will update if the application is already installed
 	 * 
@@ -128,49 +141,57 @@ public class AppManager {
 	 * @param appName Application name. If not set, uses display-name in application.xml.
 	 * @param cluster Deploy to this cluster. Must be set if more than one clusters/servers.
 	 */
-	public void installApplication(File earFile, String appName, String cluster) {
+	public void deploy(File earFile, String appName, String cluster) {
 		if (appName == null) {
 			appName = extractAppName(earFile);
 		}
-		logger.debug("Installation of {} started", appName);
+		logger.debug("Deploying {}", appName);
 		boolean appExists = am.checkIfAppExists(appName);
 		if (cluster == null) {
 			am.installApplication(earFile.getPath(), appExists, appName);
 		} else {
 			ObjectName clusterON = am.lookupCluster(cluster);
-			String cell = clusterON.getKeyProperty("cell");
-			String clusterId = "WebSphere:cell=" + cell + ",cluster=" + cluster;
+			String clusterId = AppManagementClient.createClusterString(clusterON);
 			am.installApplication(earFile.getPath(), appExists, appName, clusterId);
 		}
 		if (!isStarted(appName)) {
+			int pollInterval = 1000;
+			while (!am.isAppReady(appName)) {
+				try {
+					logger.debug("App distribution not ready, waiting {} ms", pollInterval);
+					Thread.sleep(pollInterval);
+				} catch (InterruptedException e) {
+					logger.debug("Interrupted when waiting from app ready. Continuing...");
+				}
+			};
 			am.startApplication(appName);
 		}
-		logger.info("Application {} installed successfully", appName);
+		logger.info("Application {} deployed successfully", appName);
 	}
 
 	/**
-	 * Uninstall application
+	 * Undeploy application
 	 * 
 	 * Application name is extracted from display-name in earFile's application.xml
 	 * 
 	 * @param earFile
 	 */
 	public void uninstallApplication(File earFile) {
-		uninstallApplication(extractAppName(earFile));
+		undeploy(extractAppName(earFile));
 	}
 
 	/**
-	 * Uninstall application
+	 * Undeploy application
 	 * 
 	 * @param appName
 	 */
-	public void uninstallApplication(String appName) {
-		logger.debug("Uninstallation of {} started", appName);
+	public void undeploy(String appName) {
+		logger.debug("Undeploying {}", appName);
 		boolean appExists = am.checkIfAppExists(appName);
 		if (appExists) {
 			am.uninstallApplication(appName);
 		}
-		logger.info("Application {} uninstalled successfully", appName);
+		logger.info("Application {} undeployed successfully", appName);
 	}
 
 	/**

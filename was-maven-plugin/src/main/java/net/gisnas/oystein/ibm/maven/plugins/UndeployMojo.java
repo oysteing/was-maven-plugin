@@ -19,7 +19,7 @@ public class UndeployMojo extends AbstractAppMojo {
 		if (applicationName == null) {
 			appManager.uninstallApplication(earFile);
 		} else {
-			appManager.uninstallApplication(applicationName);
+			appManager.undeploy(applicationName);
 		}
 	}
 	

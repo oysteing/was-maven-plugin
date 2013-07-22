@@ -18,9 +18,9 @@ public class StopAppMojo extends AbstractAppMojo {
 		initConnection();
 		getLog().info("Stopping application " + earFile);
 		if (applicationName == null) {
-			appManager.stopApplication(earFile);
+			appManager.stopApp(earFile);
 		} else {
-			appManager.stopApplication(applicationName);
+			appManager.stopApp(applicationName);
 		}
 	}
 	

@@ -24,7 +24,7 @@ public class DeployMojo extends AbstractAppMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		initConnection();
 		getLog().info("Deploying application " + earFile);
-		appManager.installApplication(earFile, applicationName, cluster);
+		appManager.deploy(earFile, applicationName, cluster);
 	}
 	
 }
