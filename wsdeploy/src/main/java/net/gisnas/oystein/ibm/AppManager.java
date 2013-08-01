@@ -200,7 +200,7 @@ public class AppManager {
 	 * @param earFile
 	 * @return application name
 	 */
-	private static String extractAppName(File earFile) {
+	public static String extractAppName(File earFile) {
 		try {
 			String appName = AppInstallHelper.getAppDisplayName(AppInstallHelper.getEarFile(earFile.getPath(), false, false, null), null);
 			return appName;
