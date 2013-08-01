@@ -19,12 +19,12 @@ public class DeployMojo extends AbstractAppMojo {
 	 * 
 	 * @parameter expression="${was.cluster}"
 	 */
-	private String cluster;
-	
+	protected String cluster;
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		initConnection();
 		getLog().info("Deploying application " + earFile);
 		appManager.deploy(earFile, applicationName, cluster);
 	}
-	
+
 }

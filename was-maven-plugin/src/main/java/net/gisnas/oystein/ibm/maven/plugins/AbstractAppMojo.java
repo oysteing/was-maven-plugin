@@ -9,6 +9,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 
+import com.ibm.websphere.management.AdminClient;
+
 public abstract class AbstractAppMojo extends AbstractMojo {
 
 	/**
@@ -18,7 +20,7 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 	 *            "${project.build.directory}/${project.build.finalName}.ear"
 	 */
 	protected File earFile;
-
+	
 	/**
 	 * Application name (overrides display-name in application.xml)
 	 * 
@@ -98,6 +100,8 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 	private Settings settings;
 
 	protected AppManager appManager;
+	
+	protected AdminClient adminClient;
 
 	public final void initConnection() {
 		if (serverId != null) {
@@ -114,7 +118,8 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 		} else {
 			properties = new AdminClientConnectorProperties(host, port);
 		}
-		appManager = new AppManager(AdminClientConnectorProperties.createAdminClient(properties, traceFile, traceString));
+		adminClient = AdminClientConnectorProperties.createAdminClient(properties, traceFile, traceString);
+		appManager = new AppManager(adminClient);
 	}
 
 }
