@@ -18,6 +18,8 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Retrieve SSL certificate from the deployment manager and add it to trust
@@ -26,12 +28,14 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name = "downloadCert", requiresProject = false)
 public class DownloadCertMojo extends AbstractAppMojo {
 
+	private static Logger log = LoggerFactory.getLogger(DownloadCertMojo.class);
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		initialize();
 		if (trustStore == null) {
 			throw new RuntimeException("The property trustStore must be set. Exampke: mvn was:downloadCert -Dwas.trustStore=trustStore.jks");
 		}
-		getLog().info("Retrieving certificate from " + host + ":" + port);
+		log.info("Retrieving certificate from {}:{}", host, port);
 		X509Certificate certificate = retrieveCAFromSSLHandshake();
 		addCAToTrustStore(certificate);
 	}
@@ -46,7 +50,7 @@ public class DownloadCertMojo extends AbstractAppMojo {
 			try {
 				socket.startHandshake();
 			} catch (IOException e) {
-				getLog().debug("Server certificate is not trusted, will try to add CA to keystore");
+				log.debug("Server certificate is not trusted, will try to add CA to keystore");
 			}
 
 			// Choose last cert in chain and hope that this is root CA
@@ -58,7 +62,7 @@ public class DownloadCertMojo extends AbstractAppMojo {
 				try {
 					socket.close();
 				} catch (IOException e) {
-					getLog().debug("Ignore error when closing socket", e);
+					log.debug("Ignore error when closing socket", e);
 				}
 			}
 		}
@@ -82,7 +86,7 @@ public class DownloadCertMojo extends AbstractAppMojo {
 			}
 
 			keyStore.setCertificateEntry(String.valueOf(keyStore.size()), certificate);
-			getLog().info("Added certificate (" + certificate.getSubjectX500Principal() + ") to " + trustStore + " with alias " + keyStore.size());
+			log.info("Added certificate ({}) to {} with alias {}", certificate.getSubjectX500Principal(), trustStore, keyStore.size());
 			FileOutputStream fos = null;
 			try {
 				fos = new FileOutputStream(trustStore);

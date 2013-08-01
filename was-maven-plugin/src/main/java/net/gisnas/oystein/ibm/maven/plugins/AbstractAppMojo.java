@@ -20,6 +20,8 @@ import com.ibm.websphere.management.AdminClient;
 
 public abstract class AbstractAppMojo extends AbstractMojo {
 
+	private static org.slf4j.Logger log = LoggerFactory.getLogger(AbstractAppMojo.class);
+	
 	/**
 	 * EAR file to deploy
 	 */
@@ -117,7 +119,7 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 				password = server.getPassword();
 			}
 		}
-		getLog().info("Connecting to " + host + ":" + port + " using " + (username != null ? "secured " : "") + "SOAP");
+		log.info("Connecting to {}:{} using {}SOAP", host, port, (username != null ? "secured " : ""));
 		AdminClientConnectorProperties properties;
 		if (username != null) {
 			// Use trust store from classpath if it exists and there is no explicit trust store

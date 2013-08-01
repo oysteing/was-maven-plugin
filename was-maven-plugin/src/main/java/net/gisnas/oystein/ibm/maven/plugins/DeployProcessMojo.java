@@ -7,6 +7,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Deploy BPC process application and delete existing process instances
@@ -19,6 +21,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "deploy-process", requiresProject = false)
 public class DeployProcessMojo extends AbstractAppMojo {
 
+	private static Logger log = LoggerFactory.getLogger(DeployProcessMojo.class);
+
 	/**
 	 * Name of target cluster to deploy to
 	 */
@@ -29,7 +33,7 @@ public class DeployProcessMojo extends AbstractAppMojo {
 		initialize();
 		initConnection();
 		BpcManager bpcManager = new BpcManager(adminClient);
-		getLog().info("Deleting process instances and stopping process template for application " + earFile);
+		log.info("Deleting process instances and stopping process template for application {}", earFile);
 		String appName = AppManager.extractAppName(earFile);
 		bpcManager.stopProcessTemplates(appName);
 		appManager.deploy(earFile, applicationName, cluster);

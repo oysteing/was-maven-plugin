@@ -3,6 +3,8 @@ package net.gisnas.oystein.ibm.maven.plugins;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Stop JEE application on all deployment targets through an
@@ -13,10 +15,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name = "stopApp", requiresProject = false)
 public class StopAppMojo extends AbstractAppMojo {
 
+	private static Logger log = LoggerFactory.getLogger(StopAppMojo.class);
+	
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		initialize();
 		initConnection();
-		getLog().info("Stopping application " + earFile);
+		log.info("Stopping application {}", earFile);
 		if (applicationName == null) {
 			appManager.stopApp(earFile);
 		} else {

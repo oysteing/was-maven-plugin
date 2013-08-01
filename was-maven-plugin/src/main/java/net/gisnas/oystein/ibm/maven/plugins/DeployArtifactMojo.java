@@ -11,6 +11,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Deploy JEE application to an WebSphere Application Server deployment manager
@@ -21,6 +23,8 @@ import org.apache.maven.project.MavenProject;
 @Mojo(name = "deploy-artifact", requiresProject = true, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class DeployArtifactMojo extends DeployMojo {
 
+	private static Logger log = LoggerFactory.getLogger(DeployArtifactMojo.class);
+	
 	/**
 	 * GroupId of artifact to deploy. Must be among project dependencies.
 	 */
@@ -43,7 +47,7 @@ public class DeployArtifactMojo extends DeployMojo {
 			getLog().debug("Looking for dependency " + groupId + ":" + artifactId);
 			earFile = getDependency(groupId, artifactId);
 		}
-		getLog().info("Deploying application " + earFile);
+		log.info("Deploying application {}", earFile);
 		appManager.deploy(earFile, applicationName, cluster);
 	}
 
