@@ -6,6 +6,10 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -13,38 +17,30 @@ import org.apache.maven.project.MavenProject;
  * 
  * Deploy consists of upload of artifact to deployment manager, install and start.
  * If an application with the same name already exists, redeploy will be performed.
- * 
- * @goal deploy-artifact
- * @requiresProject true
- * @requiresDependencyResolution
  */
+@Mojo(name = "deploy-artifact", requiresProject = true, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class DeployArtifactMojo extends DeployMojo {
 
 	/**
 	 * GroupId of artifact to deploy. Must be among project dependencies.
-	 * 
-	 * @parameter expression="${was.groupId}"
 	 */
+	@Parameter(property="was.groupId")
 	protected String groupId;
 
 	/**
 	 * ArtifactId of artifact to deploy. Must be among project dependencies.
-	 * 
-	 * @parameter expression="${was.artifactId}"
 	 */
+	@Parameter(property="was.artifactId")
 	protected String artifactId;
 
-	/**
-	 * @parameter default-value="${project}"
-	 * @readonly
-	 * @required
-	 */
+	@Component
 	protected MavenProject project;
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		initialize();
 		initConnection();
 		if (groupId != null && artifactId != null) {
-			getLog().info("Looking for dependency " + groupId + ":" + artifactId);
+			getLog().debug("Looking for dependency " + groupId + ":" + artifactId);
 			earFile = getDependency(groupId, artifactId);
 		}
 		getLog().info("Deploying application " + earFile);

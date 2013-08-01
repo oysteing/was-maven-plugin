@@ -17,17 +17,17 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Retrieve SSL certificate from the deployment manager and add it to trust
  * store as a trusted CA
- * 
- * @goal downloadCert
- * @requiresProject false
  */
+@Mojo(name = "downloadCert", requiresProject = false)
 public class DownloadCertMojo extends AbstractAppMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		initialize();
 		if (trustStore == null) {
 			throw new RuntimeException("The property trustStore must be set. Exampke: mvn was:downloadCert -Dwas.trustStore=trustStore.jks");
 		}
