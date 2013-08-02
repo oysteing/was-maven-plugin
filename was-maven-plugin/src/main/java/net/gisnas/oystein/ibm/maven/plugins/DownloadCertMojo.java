@@ -31,13 +31,18 @@ public class DownloadCertMojo extends AbstractAppMojo {
 	private static Logger log = LoggerFactory.getLogger(DownloadCertMojo.class);
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		initialize();
-		if (trustStore == null) {
-			throw new RuntimeException("The property trustStore must be set. Exampke: mvn was:downloadCert -Dwas.trustStore=trustStore.jks");
+		try {
+			initialize();
+			if (trustStore == null) {
+				throw new RuntimeException("The property trustStore must be set. Exampke: mvn was:downloadCert -Dwas.trustStore=trustStore.jks");
+			}
+			log.info("Retrieving certificate from {}:{}", host, port);
+			X509Certificate certificate = retrieveCAFromSSLHandshake();
+			addCAToTrustStore(certificate);
+		} catch (RuntimeException e) {
+			log.error("An error occured downloading certificate", e);
+			throw e;
 		}
-		log.info("Retrieving certificate from {}:{}", host, port);
-		X509Certificate certificate = retrieveCAFromSSLHandshake();
-		addCAToTrustStore(certificate);
 	}
 
 	private X509Certificate retrieveCAFromSSLHandshake() {

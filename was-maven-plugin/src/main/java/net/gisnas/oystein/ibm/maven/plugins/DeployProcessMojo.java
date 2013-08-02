@@ -26,17 +26,22 @@ public class DeployProcessMojo extends AbstractAppMojo {
 	/**
 	 * Name of target cluster to deploy to
 	 */
-	@Parameter(property="was.cluster")
+	@Parameter(property = "was.cluster")
 	private String cluster;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		initialize();
-		initConnection();
-		BpcManager bpcManager = new BpcManager(adminClient);
-		log.info("Deleting process instances and stopping process template for application {}", earFile);
-		String appName = AppManager.extractAppName(earFile);
-		bpcManager.stopProcessTemplates(appName);
-		appManager.deploy(earFile, applicationName, cluster);
+		try {
+			initialize();
+			initConnection();
+			BpcManager bpcManager = new BpcManager(adminClient);
+			log.info("Deleting process instances and stopping process template for application {}", earFile);
+			String appName = AppManager.extractAppName(earFile);
+			bpcManager.stopProcessTemplates(appName);
+			appManager.deploy(earFile, applicationName, cluster);
+		} catch (RuntimeException e) {
+			log.error("An error occured while deploying process {}", earFile, e);
+			throw e;
+		}
 	}
 
 }

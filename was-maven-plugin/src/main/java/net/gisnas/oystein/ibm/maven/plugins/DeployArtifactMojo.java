@@ -41,14 +41,19 @@ public class DeployArtifactMojo extends DeployMojo {
 	protected MavenProject project;
 	
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		initialize();
-		initConnection();
-		if (groupId != null && artifactId != null) {
-			getLog().debug("Looking for dependency " + groupId + ":" + artifactId);
-			earFile = getDependency(groupId, artifactId);
+		try {
+			initialize();
+			initConnection();
+			if (groupId != null && artifactId != null) {
+				getLog().debug("Looking for dependency " + groupId + ":" + artifactId);
+				earFile = getDependency(groupId, artifactId);
+			}
+			log.info("Deploying application {}", earFile);
+			appManager.deploy(earFile, applicationName, cluster);
+		} catch (RuntimeException e) {
+			log.error("An error occured while deploying artifact {}", artifactId, e);
+			throw e;
 		}
-		log.info("Deploying application {}", earFile);
-		appManager.deploy(earFile, applicationName, cluster);
 	}
 
 	private File getDependency(String groupId, String artifactId) throws MojoFailureException {
@@ -63,7 +68,7 @@ public class DeployArtifactMojo extends DeployMojo {
             }
         }
         if (artifact == null) {
-            throw new MojoFailureException(String.format("Could not resolve artifact to deploy %s:%s", groupId, artifactId));
+            throw new RuntimeException(String.format("Could not resolve artifact to deploy %s:%s", groupId, artifactId));
         }
         return artifact.getFile();
 	}
