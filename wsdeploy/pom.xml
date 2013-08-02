@@ -93,4 +93,5 @@
 			<url>https://repository-oysteing.forge.cloudbees.com/snapshot</url>
 		</repository>
 	</distributionManagement>
+
 </project>
