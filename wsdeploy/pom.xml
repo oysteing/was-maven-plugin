@@ -74,7 +74,6 @@
 						<target>1.7</target>
 					</configuration>
 				</plugin>
-				
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -87,4 +86,11 @@
 			<url>http://gobo.mycloudnas.com/maven-repo</url>
 		</repository>
 	</repositories>
+	
+	<distributionManagement>
+		<repository>
+			<id>oysteing-snapshot</id>
+			<url>https://repository-oysteing.forge.cloudbees.com/snapshot</url>
+		</repository>
+	</distributionManagement>
 </project>
