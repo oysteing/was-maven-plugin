@@ -27,6 +27,12 @@ public class AppManager {
 	public AppManager(AdminClient adminClient) {
 		am = new AppManagementClient(adminClient);
 		this.adminClient = adminClient;
+		// Test connection (for missing permissions for example)
+		try {
+			am.checkIfAppExists("non_existent_app");
+		} catch (RuntimeException e) {
+			throw new RuntimeException("Failed to connect to deployment manager. Check username/password and permissions (failed operation which required Monitor role)", e);
+		}
 	}
 
 	public boolean isStarted(String appName) {

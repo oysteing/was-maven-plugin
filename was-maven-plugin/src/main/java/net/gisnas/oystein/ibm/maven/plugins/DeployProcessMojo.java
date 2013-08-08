@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
  * might be deleted unintentionally. Use versioning and/or process migration
  * with the normal {@link DeployMojo} goal instead. Intended for use in test
  * environments where developmentServer=false
+ * 
+ * Requires administrative role Administrator
  */
 @Mojo(name = "deploy-process", requiresProject = false)
 public class DeployProcessMojo extends AbstractAppMojo {

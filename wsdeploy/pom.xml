@@ -86,12 +86,4 @@
 			<url>http://gobo.mycloudnas.com/maven-repo</url>
 		</repository>
 	</repositories>
-	
-	<distributionManagement>
-		<repository>
-			<id>oysteing-snapshot</id>
-			<url>https://repository-oysteing.forge.cloudbees.com/snapshot</url>
-		</repository>
-	</distributionManagement>
-
 </project>

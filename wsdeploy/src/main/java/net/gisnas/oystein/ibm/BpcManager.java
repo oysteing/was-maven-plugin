@@ -50,6 +50,8 @@ public class BpcManager {
 	 * Forcibly stop process templates belonging to an application
 	 * 
 	 * Will delete all process instances for the process template
+	 * 
+	 * Requires administrative role Administrator
 	 */
 	public void stopProcessTemplates(String appName) {
 		logger.info("Deleting all process instances for application {}", appName);
