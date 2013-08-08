@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
  * Application Server deployment manager
  * 
  * If the application is already running, no action is performed.
+ * 
+ * Requires administrator role Operator, Deployer or Administrator
  */
 @Mojo(name = "startApp", requiresProject = false)
 public class StartAppMojo extends AbstractAppMojo {

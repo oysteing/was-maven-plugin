@@ -35,6 +35,12 @@ public class AppManager {
 		}
 	}
 
+	/**
+	 * Checks if application is started on all nodes
+	 * 
+	 * @param appName
+	 * @return true if application is started on all nodes
+	 */
 	public boolean isStarted(String appName) {
 		logger.debug("Checking if application {} is started", appName);
 		ObjectName query;
@@ -71,6 +77,8 @@ public class AppManager {
 	 * 
 	 * Application name is extracted from display-name in earFile's application.xml
 	 * 
+	 * Requires administrator role Operator, Deployer or Administrator 
+	 * 
 	 * @param earFile
 	 */
 	public void startApp(File earFile) {
@@ -80,6 +88,8 @@ public class AppManager {
 
 	/**
 	 * Start application on all deployment targets, if not already running
+	 * 
+	 * Requires administrator role Operator, Deployer or Administrator 
 	 * 
 	 * @param appName
 	 */
@@ -99,6 +109,8 @@ public class AppManager {
 	 *
 	 * Application name is extracted from display-name in earFile's application.xml
 	 * 
+	 * Requires administrator role Operator, Deployer or Administrator 
+	 * 
 	 * @param earFile
 	 */
 	public void stopApp(File earFile) {
@@ -107,6 +119,8 @@ public class AppManager {
 
 	/**
 	 * Stop application on all deployment targets, if not already stopped
+	 * 
+	 * Requires administrator role Operator, Deployer or Administrator 
 	 * 
 	 * @param appName
 	 */
@@ -129,6 +143,8 @@ public class AppManager {
 	 *  
 	 * Will update if the application is already installed
 	 * 
+	 * Requires administrator role Deployer or Administrator 
+	 * 
 	 * @param earFile
 	 */
 	public void deploy(File earFile) {
@@ -142,6 +158,8 @@ public class AppManager {
 	 * -Start application
 	 * 
 	 * Will update if the application is already installed
+	 * 
+	 * Requires administrator role Deployer or Administrator 
 	 * 
 	 * @param earFile
 	 * @param appName Application name. If not set, uses display-name in application.xml.
@@ -180,6 +198,8 @@ public class AppManager {
 	 * 
 	 * Application name is extracted from display-name in earFile's application.xml
 	 * 
+	 * Requires administrator role Configurator, Deployer or Administrator 
+	 * 
 	 * @param earFile
 	 */
 	public void uninstallApplication(File earFile) {
@@ -188,6 +208,8 @@ public class AppManager {
 
 	/**
 	 * Undeploy application
+	 * 
+	 * Requires administrator role Configurator, Deployer or Administrator 
 	 * 
 	 * @param appName
 	 */

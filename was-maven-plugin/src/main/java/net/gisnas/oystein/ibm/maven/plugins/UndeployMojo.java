@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
  * manager
  * 
  * If the application does not exist on the server, no action is made.
+ * 
+ * Requires administrator role Configurator, Deployer or Administrator
  */
 @Mojo(name = "undeploy", requiresProject = false)
 public class UndeployMojo extends AbstractAppMojo {

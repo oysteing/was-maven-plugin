@@ -144,6 +144,8 @@ public class AppManagementClient implements NotificationListener {
 	/**
 	 * Start application on all deployment targets
 	 * 
+	 * Requires administrator role Operator, Deployer or Administrator 
+	 * 
 	 * @param appName
 	 * @see AppManagement#startApplication(String, java.util.Hashtable, String)
 	 */
@@ -161,6 +163,8 @@ public class AppManagementClient implements NotificationListener {
 
 	/**
 	 * Stop application on all deployment targets
+	 * 
+	 * Requires administrator role Operator, Deployer or Administrator 
 	 * 
 	 * @param appName
 	 * @see AppManagement#stopApplication(String, java.util.Hashtable, String)
@@ -182,6 +186,8 @@ public class AppManagementClient implements NotificationListener {
 	 * 
 	 * If there are multiple servers and one clusters, the cluster will be
 	 * chosen as the deployment target.
+	 * 
+	 * Requires administrator role Configurator, Deployer or Administrator 
 	 * 
 	 * @param earPath
 	 * @param redeploy
@@ -236,6 +242,19 @@ public class AppManagementClient implements NotificationListener {
 		return deploymentTarget;
 	}
 
+	/**
+	 * Install application on deployment manager with one cluster or one server
+	 * 
+	 * If there are multiple servers and one clusters, the cluster will be
+	 * chosen as the deployment target.
+	 * 
+	 * Requires administrator role Configurator, Deployer or Administrator 
+	 * 
+	 * @param earPath
+	 * @param redeploy
+	 * @param appName
+	 * @param target
+	 */
 	public void installApplication(String earFile, boolean redeploy, String appName, String target) {
 		try {
 			Hashtable<String, String> module2server = new Hashtable<>();
@@ -276,6 +295,13 @@ public class AppManagementClient implements NotificationListener {
 		}
 	}
 
+	/**
+	 * Uninstall application on deployment manager
+	 * 
+	 * Requires administrator role Configurator, Deployer or Administrator 
+	 * 
+	 * @param appName
+	 */
 	public void uninstallApplication(String appName) {
 		try {
 			adminClient.addNotificationListener(getMBean(), this, null, null);
@@ -329,6 +355,12 @@ public class AppManagementClient implements NotificationListener {
 		}
 	}
 
+	/**
+	 * Check if application exists in cell
+	 * 
+	 * @param appName
+	 * @return true if application exists
+	 */
 	public boolean checkIfAppExists(String appName) {
 		try {
 			return proxy.checkIfAppExists(appName, null, null);
@@ -337,6 +369,14 @@ public class AppManagementClient implements NotificationListener {
 		}
 	}
 
+	/**
+	 * Check if application is distributed to all nodes
+	 * 
+	 * Blocks until distribution is completed
+	 * 
+	 * @param appName
+	 * @return true if aplication is distributed to all nodes
+	 */
 	public boolean isAppReady(String appName) {
 		try {
 			logger.debug("Checking distribution status for {}", appName);

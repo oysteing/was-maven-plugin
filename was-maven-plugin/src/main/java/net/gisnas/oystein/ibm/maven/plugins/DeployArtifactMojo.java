@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
  * 
  * Deploy consists of upload of artifact to deployment manager, install and start.
  * If an application with the same name already exists, redeploy will be performed.
+ * 
+ * Requires administrator role Deployer or Administrator
  */
 @Mojo(name = "deploy-artifact", requiresProject = true, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class DeployArtifactMojo extends DeployMojo {
