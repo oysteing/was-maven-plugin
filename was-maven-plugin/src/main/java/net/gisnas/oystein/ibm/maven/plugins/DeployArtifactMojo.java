@@ -30,13 +30,13 @@ public class DeployArtifactMojo extends DeployMojo {
 	/**
 	 * GroupId of artifact to deploy. Must be among project dependencies.
 	 */
-	@Parameter(property="was.groupId")
+	@Parameter(property="was.groupId", required = true)
 	protected String groupId;
 
 	/**
 	 * ArtifactId of artifact to deploy. Must be among project dependencies.
 	 */
-	@Parameter(property="was.artifactId")
+	@Parameter(property="was.artifactId", required = true)
 	protected String artifactId;
 
 	@Component
@@ -45,11 +45,9 @@ public class DeployArtifactMojo extends DeployMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		try {
 			initialize();
+			getLog().debug("Looking for dependency " + groupId + ":" + artifactId);
+			earFile = getDependency(groupId, artifactId);
 			initConnection();
-			if (groupId != null && artifactId != null) {
-				getLog().debug("Looking for dependency " + groupId + ":" + artifactId);
-				earFile = getDependency(groupId, artifactId);
-			}
 			log.info("Deploying application {}", earFile);
 			appManager.deploy(earFile, applicationName, cluster);
 		} catch (RuntimeException e) {

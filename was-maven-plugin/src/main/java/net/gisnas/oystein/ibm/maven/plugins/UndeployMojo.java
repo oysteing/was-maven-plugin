@@ -23,14 +23,18 @@ public class UndeployMojo extends AbstractAppMojo {
 		try {
 			initialize();
 			initConnection();
-			log.info("Undeploying application {}", earFile);
 			if (applicationName == null) {
+				if (!earFile.canRead()) {
+					throw new MojoFailureException("applicationName not set and EAR file not found: " + earFile);
+				}
+				log.info("Undeploying application {}", earFile);
 				appManager.uninstallApplication(earFile);
 			} else {
+				log.info("Undeploying application {}", applicationName);
 				appManager.undeploy(applicationName);
 			}
 		} catch (RuntimeException e) {
-			log.error("An error occured while undeploying application {}", earFile, e);
+			log.error("An error occured while undeploying application {}", (applicationName == null ? earFile : applicationName), e);
 			throw e;
 		}
 	}

@@ -23,14 +23,18 @@ public class StopAppMojo extends AbstractAppMojo {
 		try {
 			initialize();
 			initConnection();
-			log.info("Stopping application {}", earFile);
 			if (applicationName == null) {
+				if (!earFile.canRead()) {
+					throw new MojoFailureException("applicationName not set and EAR file not found: " + earFile);
+				}
+				log.info("Stopping application {}", earFile);
 				appManager.stopApp(earFile);
 			} else {
+				log.info("Stopping application {}", applicationName);
 				appManager.stopApp(applicationName);
 			}
 		} catch (RuntimeException e) {
-			log.error("An error occured while stopping application {}", earFile, e);
+			log.error("An error occured while stopping application {}", (applicationName == null ? earFile : applicationName), e);
 			throw e;
 		}
 	}

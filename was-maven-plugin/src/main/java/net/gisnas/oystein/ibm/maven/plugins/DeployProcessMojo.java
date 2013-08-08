@@ -34,6 +34,9 @@ public class DeployProcessMojo extends AbstractAppMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		try {
 			initialize();
+			if (!earFile.canRead()) {
+				throw new MojoFailureException("EAR file not found: " + earFile);
+			}
 			initConnection();
 			BpcManager bpcManager = new BpcManager(adminClient);
 			log.info("Deleting process instances and stopping process template for application {}", earFile);
