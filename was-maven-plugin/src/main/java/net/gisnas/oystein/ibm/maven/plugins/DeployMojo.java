@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * 
  * Requires administrator role Deployer or Administrator
  */
-@Mojo(name = "deploy", requiresProject = true)
+@Mojo(name = "deploy", requiresProject = false)
 public class DeployMojo extends AbstractAppMojo {
 
 	private static Logger log = LoggerFactory.getLogger(DeployMojo.class);
