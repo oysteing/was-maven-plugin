@@ -92,4 +92,15 @@
 		<developerConnection>scm:git:git@github.com:oysteing/ibmdeploy.git</developerConnection>
 		<url>https://github.com/oysteing/ibmdeploy</url>
 	</scm>
+	
+	<distributionManagement>
+		<repository>
+			<id>oysteing-cloudbees-snapshot</id>
+			<url>https://repository-oysteing.forge.cloudbees.com/release</url>
+		</repository>
+		<snapshotRepository>
+			<id>oysteing-cloudbees-snapshot</id>
+			<url>https://repository-oysteing.forge.cloudbees.com/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
