@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.ibm.websphere.management.AdminClient;
 
-public class AppManagementClientTest {
+public class AppManagementClientIT {
 
 	private static final File TRUST_STORE = new File("/home/oysteigi/src/ibmdeploy/wsdeploy/src/test/resources/trustStore.jks");
 	private static final String EAR_FILE = "src/test/resources/echoear-0.0.1-SNAPSHOT.ear";

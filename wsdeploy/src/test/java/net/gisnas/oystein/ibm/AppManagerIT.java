@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import com.ibm.websphere.management.AdminClient;
 
-public class AppManagerTest {
+public class AppManagerIT {
 
 	private static final File TRUST_STORE = new File("src/test/resources/trustStore.jks");
 	private static final File EAR_FILE = new File("src/test/resources/echoear-0.0.1-SNAPSHOT.ear");

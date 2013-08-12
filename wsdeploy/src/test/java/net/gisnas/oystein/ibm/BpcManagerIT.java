@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.ibm.websphere.management.AdminClient;
 
-public class BpcManagerTest {
+public class BpcManagerIT {
 
 	private static final File TRUST_STORE = new File("src/test/resources/trustStore.jks");
 	private static final String APP_NAME = "HelloBPELApp";
