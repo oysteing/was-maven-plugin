@@ -109,6 +109,16 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 		if (debug) {
 			((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.DEBUG);
 		}
+		// Use trust store from classpath if it exists and there is no explicit trust store
+		if (trustStore == null) {
+			trustStore = TrustStoreHelper.classpathTrustStore();
+		}
+		if (trustStore != null) {
+			if (!trustStore.exists()) {
+				throw new RuntimeException("Trust store " + trustStore + " doesn't exist");
+			}
+			System.setProperty("javax.net.ssl.trustStore", trustStore.getPath());
+		}
 	}
 
 	public final void initConnection() {
@@ -122,11 +132,7 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 		log.info("Connecting to {}:{} using {}SOAP", host, port, (username != null ? "secured " : ""));
 		AdminClientConnectorProperties properties;
 		if (username != null) {
-			// Use trust store from classpath if it exists and there is no explicit trust store
-			if (trustStore == null) {
-				trustStore = TrustStoreHelper.classpathTrustStore();
-			}
-			properties = new AdminClientConnectorProperties(host, port, username, password, trustStore);
+			properties = new AdminClientConnectorProperties(host, port, username, password);
 		} else {
 			properties = new AdminClientConnectorProperties(host, port);
 		}
