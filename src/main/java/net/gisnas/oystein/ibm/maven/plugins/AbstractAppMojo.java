@@ -21,7 +21,7 @@ import com.ibm.websphere.management.AdminClient;
 public abstract class AbstractAppMojo extends AbstractMojo {
 
 	private static org.slf4j.Logger log = LoggerFactory.getLogger(AbstractAppMojo.class);
-	
+
 	/**
 	 * EAR file to deploy
 	 */
@@ -81,9 +81,9 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 	protected File traceFile;
 
 	/**
-	 * Trace specification according to {@link http
-	 * ://pic.dhe.ibm.com/infocenter/
-	 * wasinfo/v8r5/topic/com.ibm.websphere.base.doc/ae/utrb_loglevel.html}
+	 * Trace according to <a href=
+	 * "http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/topic/com.ibm.websphere.base.doc/ae/utrb_loglevel.html"
+	 * >specification</a>
 	 * 
 	 * For example "*=finest" for the most verbose output. This setting only
 	 * takes effect if {@link AbstractAppMojo#traceFile} is set. When not
@@ -114,7 +114,8 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 	}
 
 	private void initializeTrustStore() {
-		// Use trust store from classpath if it exists and there is no explicit trust store
+		// Use trust store from classpath if it exists and there is no explicit
+		// trust store
 		if (trustStore == null) {
 			trustStore = TrustStoreHelper.classpathTrustStore();
 		}
