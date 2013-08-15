@@ -109,6 +109,11 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 		if (debug) {
 			((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.DEBUG);
 		}
+		initializeTrustStore();
+		initializeCredentials();
+	}
+
+	private void initializeTrustStore() {
 		// Use trust store from classpath if it exists and there is no explicit trust store
 		if (trustStore == null) {
 			trustStore = TrustStoreHelper.classpathTrustStore();
@@ -121,7 +126,7 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 		}
 	}
 
-	public final void initConnection() {
+	private void initializeCredentials() {
 		if (serverId != null) {
 			Server server = settings.getServer(serverId);
 			if (server != null) {
@@ -129,6 +134,9 @@ public abstract class AbstractAppMojo extends AbstractMojo {
 				password = server.getPassword();
 			}
 		}
+	}
+
+	public final void initConnection() {
 		log.info("Connecting to {}:{} using {}SOAP", host, port, (username != null ? "secured " : ""));
 		AdminClientConnectorProperties properties;
 		if (username != null) {
