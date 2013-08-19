@@ -52,16 +52,13 @@ public class DeployProcessMojo extends AbstractAppMojo {
 			if (importEndpoints.length > 0) {
 				try {
 					ScaUtil.modifyWsImports(importEndpoints, earFile, targetFile);
+					earFile = targetFile;
 				} catch (IOException e) {
 					throw new RuntimeException("Unable to modify import in " + earFile, e);
 				}
 			}
-//			initConnection();
-//			BpcManager bpcManager = new BpcManager(adminClient);
-//			log.info("Deleting process instances and stopping process template for application {}", earFile);
-//			String appName = AppManager.extractAppName(earFile);
-//			bpcManager.stopProcessTemplates(appName);
-//			appManager.deploy(earFile, applicationName, cluster);
+			initConnection();
+			appManager.deploy(earFile, applicationName, cluster);
 		} catch (RuntimeException e) {
 			log.error("An error occured while deploying process {}", earFile, e);
 			throw e;
