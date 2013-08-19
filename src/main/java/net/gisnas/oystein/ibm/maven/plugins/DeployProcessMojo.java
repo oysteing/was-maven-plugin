@@ -1,7 +1,10 @@
 package net.gisnas.oystein.ibm.maven.plugins;
 
-import net.gisnas.oystein.ibm.AppManager;
-import net.gisnas.oystein.ibm.BpcManager;
+import java.io.File;
+import java.io.IOException;
+
+import net.gisnas.oystein.ibm.ImportEndpoint;
+import net.gisnas.oystein.ibm.ScaUtil;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -31,18 +34,34 @@ public class DeployProcessMojo extends AbstractAppMojo {
 	@Parameter(property = "was.cluster")
 	private String cluster;
 
+	/**
+	 * List of imports and endpoints to override
+	 */
+	@Parameter(property = "was.importEndpoints")
+	protected ImportEndpoint[] importEndpoints;
+	
+	@Parameter(property = "was.targetFile", defaultValue="${project.build.directory}/${project.build.finalName}-deploy.ear")
+	protected File targetFile;
+
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		try {
 			initialize();
 			if (!earFile.canRead()) {
 				throw new MojoFailureException("EAR file not found: " + earFile);
 			}
-			initConnection();
-			BpcManager bpcManager = new BpcManager(adminClient);
-			log.info("Deleting process instances and stopping process template for application {}", earFile);
-			String appName = AppManager.extractAppName(earFile);
-			bpcManager.stopProcessTemplates(appName);
-			appManager.deploy(earFile, applicationName, cluster);
+			if (importEndpoints.length > 0) {
+				try {
+					ScaUtil.modifyWsImports(importEndpoints, earFile, targetFile);
+				} catch (IOException e) {
+					throw new RuntimeException("Unable to modify import in " + earFile, e);
+				}
+			}
+//			initConnection();
+//			BpcManager bpcManager = new BpcManager(adminClient);
+//			log.info("Deleting process instances and stopping process template for application {}", earFile);
+//			String appName = AppManager.extractAppName(earFile);
+//			bpcManager.stopProcessTemplates(appName);
+//			appManager.deploy(earFile, applicationName, cluster);
 		} catch (RuntimeException e) {
 			log.error("An error occured while deploying process {}", earFile, e);
 			throw e;
