@@ -74,6 +74,7 @@ public class DeployArtifactMojo extends DeployMojo {
 				try {
 					if (targetFile == null) {
 						targetFile = new File(project.getBuild().getDirectory(), earFile.getName() + "-deploy.ear");
+						new File(project.getBuild().getDirectory()).mkdir();
 					}
 					ScaUtil.modifyWsImports(importEndpoints, earFile, targetFile);
 					earFile = targetFile;
